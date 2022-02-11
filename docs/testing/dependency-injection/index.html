@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="canonical" href="https://swiftcoder.site/testing/dependency-injection/">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Dependency injection - Swift Coder - Artur Gurgul</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Dependency injection";
+    var mkdocs_page_input_path = "testing/dependency-injection.md";
+    var mkdocs_page_url = "/testing/dependency-injection/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Swift Coder - Artur Gurgul</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home page</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../threading/">Threading</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Testing</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Dependency injection</a>
+    <ul class="current">
+    </ul>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Swift Coder - Artur Gurgul</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Testing &raquo;</li>
+        
+      
+    
+    <li>Dependency injection</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h3 id="the-app-implementation">The app implementation</h3>
+<p>First, we need to create the interface for our reposiotry that provides us the temperature for given location.
+In order to make the app more testable we will use the protocol defined below across the whole app instead of a class name that points to the final implementation.</p>
+<pre><code class="language-swift">protocol TemperatureProviding {
+    func temperature(for location: CLLocation, result: (Float64) -&gt; Void)
+}
+</code></pre>
+<p><code>TemperatureProvider</code> is the class that implements the real api calls and operates on real data, but the app will not use it directly in order to have possibility to mock the data repository.</p>
+<pre><code class="language-swift">protocol TemperatureProvider: LoggerProviding {
+    func temperature(for location: CLLocation, result: (Float64) -&gt; Void)
+        // requesting the temperature from backend or whatever 
+    }
+}
+</code></pre>
+<p>Every time when we want to use repository we need to inject it into the class using <code>@Injected</code> property wrapper. The point of it is that the <code>TemperatureProvider</code> user does not know the target implementation and not even care.  </p>
+<pre><code class="language-swift">struct TemperatureViewModel {
+    @Injected(\.temperatureProvider) var temperatureProvider: TemperatureProvider
+
+    func loadData() {
+        let location = CLLocation(latitude: 49.9683988, longitude: 20.7260966)
+        temperatureProvider.temperature(for: location, result: { temperature in
+            print(&quot;temperature is: \(temperature)&quot;)
+        }
+    }
+}
+</code></pre>
+<h3 id="define-dependency">Define dependency</h3>
+<p>Depencency injector uses <code>InjectionKey</code> to register depencencies. It stores in the static property a currenct value for every key type (see next chapter to see implementation)</p>
+<p>Every class that is injected has to implement key and current value like this:</p>
+<pre><code class="language-swift">private struct TemperatureProviderKey: InjectionKey {
+    static var currentValue: TemperatureProviding = TemperatureProvider()
+}
+</code></pre>
+<p>Here we espose property in order to update or set the new value like:</p>
+<ul>
+<li><code>InjectedValues.temperatureProvider = MockedTemperatureProvider()</code></li>
+<li><code>InjectedValues[\.temperatureProvider] = MockedTemperatureProvider()</code></li>
+</ul>
+<pre><code class="language-swift">extension InjectedValues {
+    var temperatureProvider: TemperatureProviding {
+        get { Self[TemperatureProviderKey.self] }
+        set { Self[TemperatureProviderKey.self] = newValue }
+    }
+}
+</code></pre>
+<h3 id="implementation-of-dependency-injector">Implementation of dependency injector</h3>
+<p>Let's define the protocol that defunes Keys that store current value</p>
+<pre><code class="language-swift">public protocol InjectionKey {
+    associatedtype Value
+    static var currentValue: Self.Value { get set }
+}
+</code></pre>
+<p><code>InjectedValues</code> is a singletion that for <code>KeyPath</code></p>
+<pre><code class="language-swift">struct InjectedValues {
+    private static var current = InjectedValues()
+    private init() {}
+
+    static subscript&lt;K&gt;(key: K.Type) -&gt; K.Value where K : InjectionKey {
+        get { key.currentValue }
+        set { key.currentValue = newValue }
+    }
+
+    static subscript&lt;T&gt;(_ keyPath: WritableKeyPath&lt;InjectedValues, T&gt;) -&gt; T {
+        get { current[keyPath: keyPath] }
+        set { current[keyPath: keyPath] = newValue }
+    }
+}
+</code></pre>
+<pre><code class="language-swift">@propertyWrapper
+struct Injected&lt;T&gt; {
+    private let keyPath: WritableKeyPath&lt;InjectedValues, T&gt;
+    var wrappedValue: T {
+        get { InjectedValues[keyPath] }
+        set { InjectedValues[keyPath] = newValue }
+    }
+
+    init(_ keyPath: WritableKeyPath&lt;InjectedValues, T&gt;) {
+        self.keyPath = keyPath
+    }
+}
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../../threading/" class="btn btn-neutral" title="Threading"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../threading/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

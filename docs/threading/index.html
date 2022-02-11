@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="canonical" href="https://swiftcoder.site/threading/">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Threading - Swift Coder - Artur Gurgul</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Threading";
+    var mkdocs_page_input_path = "threading.md";
+    var mkdocs_page_url = "/threading/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Swift Coder - Artur Gurgul</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Home page</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Threading</a>
+    <ul class="current">
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Testing</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../testing/dependency-injection/">Dependency injection</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Swift Coder - Artur Gurgul</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Threading</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h4 id="kind-of-jobs-might-be-perform-in-the-separate-threads">Kind of jobs might be perform in the separate threads</h4>
+<ul>
+<li>Computation intensive jobs: When the thread uses entire processing capability of CPU. The reasonable maximum number of the threads is the number of CPU cores. By crating more threads we cause unnecessary switching of the context by the CPU, which takes some unit of time therefore it makes the calculation slower.</li>
+<li>I/O intensive jobs: In that case we can trigger more threads than we have CPU cores and there is a formula how we can calculate how many thread is an optimal <code>Threads</code> = <code>Cores</code> / (1-<code>Blocking Factor</code>). Here the switch of CPU context itself does not impact much into performance, because the  thread probably is waiting for a signal anyway.</li>
+</ul>
+<h4 id="mutex-and-the-data-consistency">Mutex and the data consistency</h4>
+<p>What makes threading difficult is the data consistency. Imagine the situation when there are two threads that have a pointer to the same array which suppose to contains unique items. Both threads can modify and read the array. Let's say both of the threads want to append the same item at exactly the same time to this array. What they do is to check if the item already exists in the array so they iterate through the array for checking the item if it is a duplicate and if not both of them will append it.</p>
+<p>The array will contains two the same items or even works the app will crash because the array might be mutated at the time the other threat iterate through it.</p>
+<p>The solution is to use <code>mutex</code> for blocking threads in order to avoid override the data.</p>
+<pre><code class="language-swift">var mutex = pthread_mutex_t()
+pthread_mutex_init(&amp;mutex, nil)
+pthread_mutex_lock(&amp;mutex)
+// do atomic job
+pthread_mutex_unlock(&amp;mutex)
+pthread_mutex_destroy(&amp;mutex)
+</code></pre>
+<p>Another mechanism for syncing thread is semaphore, but you need to be aware of potential deadlock. Below you can see one</p>
+<pre><code class="language-swift">let semaphore = DispatchSemaphore(value: 0)
+semaphore.wait() // DEADLOCK
+semaphore.signal()
+</code></pre>
+<p>The current thread stops and wait for a signal that can not be send in this case, because we try to send it from the same thread which is stopped.</p>
+<p><a href="https://www.cocoawithlove.com/blog/2016/06/02/threads-and-mutexes.html">Article abut mutexes</a></p>
+<h1 id="nsobject">NSObject</h1>
+<p>The easiest way to start a new thread is to use a method that comes from base class <code>NSObject</code></p>
+<pre><code class="language-swift">performSelector(inBackground: #selector(job), with: nil)
+</code></pre>
+<h1 id="gcd-grand-central-dispatch">GCD (Grand Central Dispatch)</h1>
+<p>The <a href="https://github.com/apple/swift-corelibs-libdispatch">libdispatch</a> is a part of core library which takes care about threading.</p>
+<p>In particular how to manage sync calls</p>
+<ul>
+<li><code>dispatch_once</code>: Does not exists in SDK anymore <a href="http://stackoverflow.com/questions/37801407/whither-dispatch-once-in-swift-3">[1]</a> Here is an alternative</li>
+</ul>
+<pre><code class="language-swift">private lazy var foo: Void = {
+    // Do this once
+}()
+</code></pre>
+<ul>
+<li><code>dispatch_sync</code>: locks the current thread until the passed block is executed on the separated thread</li>
+<li><code>dispatch_async</code>: starts executing the passed block on a separate thread, but the current one keeps running</li>
+</ul>
+<pre><code class="language-swift">// without &quot;attributes&quot; we will get serial queue
+let queue = DispatchQueue(label: &quot;important.job&quot;, qos: .default, attributes: .concurrent)
+queue.async {
+    // do stuff
+}
+</code></pre>
+<pre><code class="language-swift">DispatchQueue.main.async {
+    &lt;#code#&gt;
+}
+</code></pre>
+<pre><code class="language-swift">DispatchQueue.global(qos: .background).async {
+    &lt;#code#&gt;
+}
+</code></pre>
+<ol>
+<li><a href="https://www.raywenderlich.com/60749/grand-central-dispatch-in-depth-part-1">Raywenderlich article</a></li>
+<li><a href="https://developer.apple.com/library/content/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationQueues/OperationQueues.html">serial vs concurrent queues</a></li>
+<li><a href="http://stackoverflow.com/questions/7078658/operation-queue-vs-dispatch-queue-for-ios-application">This answer says that "<code>NSOperationQueue</code> does use GCD on iOS 4.0 and later"</a>
+it says also quote:<ul>
+<li>Prefer GCD where task is not much complex and optimum CPU performance is required.</li>
+<li>Prefer NSOperationQueue where task is complex and requires canceling or suspending a block and dependency management.</li>
+</ul>
+</li>
+<li><a href="http://www.appcoda.com/ios-concurrency/">Nice article that TODO: look at examples from the picture</a></li>
+</ol>
+<h1 id="nsthread">NSThread</h1>
+<ul>
+<li>https://developer.apple.com/reference/foundation/thread
+This is the most</li>
+</ul>
+<pre><code class="language-swift">let thread = Thread(target: self, selector: #selector(job), object: nil)
+// or
+let thread = Thread {
+    &lt;#code#&gt;
+}
+// and then start the tread
+thread.start()
+</code></pre>
+<h1 id="nsoperationqueue">NSOperationQueue</h1>
+<p><a href="https://www.raywenderlich.com/76341/use-nsoperation-nsoperationqueue-swift">[1]</a>
+* How to cancel NSOperationQueue</p>
+<h4 id="blueprint-of-nsoperation">Blueprint of NSOperation</h4>
+<pre><code class="language-swift">class MyVeryExpensiveOperation: Operation {
+    override func main() {
+        if self.isCancelled { return }
+        // Some chunk of time consuming task
+        if self.isCancelled { return }
+        // Some another chunk of time consuming task
+        // and so on...
+    }
+}
+</code></pre>
+<h4 id="blueprint-of-nsoperationqueue">Blueprint of NSOperationQueue</h4>
+<pre><code class="language-swift">let queue = OperationQueue()
+queue.name = &quot;Queue Name&quot;
+queue.maxConcurrentOperationCount = 1
+let myOperation = MyVeryExpensiveOperation()
+queue.addOperation(myOperation)
+queue.addOperation {
+    // some another job passed by block
+}
+</code></pre>
+<h1 id="pthread-advancedjfyi">pthread (advanced/JFYI)</h1>
+<p>There is no good idea to handle threads from low level because it affect highly into development time of an application, whoever as all of us we are curious about everything, so I am going to show you how to do <code>pthreading</code> on iOS. Here is an example:</p>
+<pre><code class="language-swift">var user_interactive_thread: pthread_t?
+var user_interactive_qos_attr = pthread_attr_t()
+
+return_value = pthread_attr_init(&amp;user_interactive_qos_attr)
+return_value = pthread_attr_set_qos_class_np(&amp;user_interactive_qos_attr, QOS_CLASS_USER_INTERACTIVE, 0)
+
+return_value = pthread_create(&amp;user_interactive_thread, &amp;user_interactive_qos_attr, { (x:UnsafeMutableRawPointer) in
+    print(&quot;New pthread job&quot;)
+    return nil
+}, nil)
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../testing/dependency-injection/" class="btn btn-neutral float-right" title="Dependency injection">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home page"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../testing/dependency-injection/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

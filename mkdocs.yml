@@ -1,3 +1,7 @@
 site_name: Swift Coder - Artur Gurgul
 docs_dir: articles
 site_dir: docs
+site_url: https://swiftcoder.site/
+
+theme:
+    name: readthedocs
