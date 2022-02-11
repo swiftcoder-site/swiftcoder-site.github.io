@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+import getopt
+import sys
+
+argv = sys.argv[1:]
+opts, args = getopt.getopt(argv, 'i:o:t:', [])
+
+print(opts, args)
+
+if len(args) != 0:
+    print("Passed incorrect arguments")
+    exit(-1)
+
