@@ -1,11 +1,7 @@
-<!--
-iban: 2355
--->
-
-
 # About
 
-This website is kind of book that describes good practices with writting Swift code
+This website is kind of a book that describes good practices on writting Swift code.
+
 I create content for this website without any expectations, 
 nor trying to get attention in any sort. I do it just for fun and to ornainze my kownladge
 about Swift and iOS related subbjects.
