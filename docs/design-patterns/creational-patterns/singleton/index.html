@@ -82,21 +82,33 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
     
 
     <h1 id="singleton">Singleton</h1>
-<p>Singleton is a design pattern that give a way to get global access to instance of a class, and make sure there is only one of instace of it.</p>
-<p>Steps to achieve this:</p>
+<p>Singleton is a design pattern that gives a way to get the global access to an instance of a class, and make sure there is only one of the instace of it.</p>
+<p>Steps to achieve this behaviour:</p>
 <ul>
 <li>Make constructor private</li>
 <li>Create static varible</li>
 </ul>
 <p>Let's look at the example:</p>
 <pre><code class="language-swift">class ApiClient {
-    static let shared = ApiClient()
+    static let shared = Self()
     private init() {
 
     }
 }
 </code></pre>
 <p>Now, we can access the instance of <code>ApiClient</code> by <code>ApiClient.shared</code>.</p>
+<p>Here is version with lazy initialisation.</p>
+<pre><code class="language-swift">class ApiClient {
+    // NOTE: Static veribles do not need lazy keywoard
+    static var shared: ApiClient = {
+        ApiClient()
+    }()
+
+    private init() {
+
+    }
+}
+</code></pre>
 
   <br>
     
