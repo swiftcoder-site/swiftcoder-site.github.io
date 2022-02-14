@@ -14,5 +14,9 @@ nav:
     - SDK: 
       - Threading: sdk/threading.md
 
+# theme:
+#     name: readthedocs
+
 theme:
-    name: readthedocs
+  name: null
+  custom_dir: 'cinder'
