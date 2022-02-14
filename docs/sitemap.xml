@@ -2,17 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://swiftcoder.site/</loc>
-         <lastmod>2022-02-11</lastmod>
+         <lastmod>2022-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://swiftcoder.site/threading/</loc>
-         <lastmod>2022-02-11</lastmod>
+         <loc>https://swiftcoder.site/design-patterns/creational-patterns/singleton/</loc>
+         <lastmod>2022-02-14</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://swiftcoder.site/sdk/threading/</loc>
+         <lastmod>2022-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://swiftcoder.site/testing/dependency-injection/</loc>
-         <lastmod>2022-02-11</lastmod>
+         <lastmod>2022-02-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

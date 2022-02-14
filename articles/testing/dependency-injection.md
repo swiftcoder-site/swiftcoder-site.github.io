@@ -40,7 +40,7 @@ struct TemperatureViewModel {
 
 ### Define dependency
 
-Depencency injector uses `InjectionKey` to register depencencies. It stores in the static property a currenct value for every key type (see next chapter to see implementation)
+1st step: Depencency injector uses `InjectionKey` to register depencencies. It stores in the static property a currenct value for every key type (see next chapter to see implementation)
 
 Every class that is injected has to implement key and current value like this:
 
@@ -50,11 +50,7 @@ private struct TemperatureProviderKey: InjectionKey {
 }
 ```
 
-Here we espose property in order to update or set the new value like:
-
-- `InjectedValues.temperatureProvider = MockedTemperatureProvider()`
-- `InjectedValues[\.temperatureProvider] = MockedTemperatureProvider()`
-
+2nd step: Extend `InjectedValues` and add propetry to it. It will link the exact `InjectionKey` implementation with the property. The property wrapper called like this `@Injected(\.temperatureProvider)` will take the pey path, access `InjectedValues` and use keypath on it, and the getter of an injected propeperty will extract value from `InjectionKey`.
 
 ``` swift
 extension InjectedValues {
@@ -64,11 +60,11 @@ extension InjectedValues {
     }
 }
 ```
-
+- `InjectedValues[\.temperatureProvider] = MockedTemperatureProvider()`
 
 ### Implementation of dependency injector
 
-Let's define the protocol that defunes Keys that store current value
+Let's define the protocol that defines the `InjectionKey` that holds current value
 
 ```swift
 public protocol InjectionKey {
@@ -77,7 +73,7 @@ public protocol InjectionKey {
 }
 ```
 
-`InjectedValues` is a singletion that for `KeyPath`
+Here is how `InjectedValues` is defined. 
 
 ```swift
 struct InjectedValues {
@@ -95,6 +91,8 @@ struct InjectedValues {
     }
 }
 ```
+
+and there is definition of the property wrapper
 
 ```swift
 @propertyWrapper

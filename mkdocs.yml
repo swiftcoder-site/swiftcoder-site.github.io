@@ -3,5 +3,16 @@ docs_dir: articles
 site_dir: docs
 site_url: https://swiftcoder.site/
 
+nav:
+    - Home: index.md
+    - Testing: 
+      - Dependency injection: testing/dependency-injection.md
+    # - Code snippets: index.md
+    - Design patterns: 
+      - Creational patterns:
+        - Singleton: design-patterns/creational-patterns/singleton.md
+    - SDK: 
+      - Threading: sdk/threading.md
+
 theme:
     name: readthedocs

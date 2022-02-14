@@ -47,11 +47,7 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
                 <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../..">Home page</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../threading/">Threading</a>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
                     </li>
                 </ul>
                 <p class="caption"><span class="caption-text">Testing</span></p>
@@ -59,6 +55,20 @@
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Dependency injection</a>
     <ul class="current">
     </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Design patterns</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="#">Creational patterns</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../design-patterns/creational-patterns/singleton/">Singleton</a>
+                </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">SDK</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../sdk/threading/">Threading</a>
                     </li>
                 </ul>
       </div>
@@ -125,17 +135,13 @@ In order to make the app more testable we will use the protocol defined below ac
 }
 </code></pre>
 <h3 id="define-dependency">Define dependency</h3>
-<p>Depencency injector uses <code>InjectionKey</code> to register depencencies. It stores in the static property a currenct value for every key type (see next chapter to see implementation)</p>
+<p>1st step: Depencency injector uses <code>InjectionKey</code> to register depencencies. It stores in the static property a currenct value for every key type (see next chapter to see implementation)</p>
 <p>Every class that is injected has to implement key and current value like this:</p>
 <pre><code class="language-swift">private struct TemperatureProviderKey: InjectionKey {
     static var currentValue: TemperatureProviding = TemperatureProvider()
 }
 </code></pre>
-<p>Here we espose property in order to update or set the new value like:</p>
-<ul>
-<li><code>InjectedValues.temperatureProvider = MockedTemperatureProvider()</code></li>
-<li><code>InjectedValues[\.temperatureProvider] = MockedTemperatureProvider()</code></li>
-</ul>
+<p>2nd step: Extend <code>InjectedValues</code> and add propetry to it. It will link the exact <code>InjectionKey</code> implementation with the property. The property wrapper called like this <code>@Injected(\.temperatureProvider)</code> will take the pey path, access <code>InjectedValues</code> and use keypath on it, and the getter of an injected propeperty will extract value from <code>InjectionKey</code>.</p>
 <pre><code class="language-swift">extension InjectedValues {
     var temperatureProvider: TemperatureProviding {
         get { Self[TemperatureProviderKey.self] }
@@ -143,14 +149,17 @@ In order to make the app more testable we will use the protocol defined below ac
     }
 }
 </code></pre>
+<ul>
+<li><code>InjectedValues[\.temperatureProvider] = MockedTemperatureProvider()</code></li>
+</ul>
 <h3 id="implementation-of-dependency-injector">Implementation of dependency injector</h3>
-<p>Let's define the protocol that defunes Keys that store current value</p>
+<p>Let's define the protocol that defines the <code>InjectionKey</code> that holds current value</p>
 <pre><code class="language-swift">public protocol InjectionKey {
     associatedtype Value
     static var currentValue: Self.Value { get set }
 }
 </code></pre>
-<p><code>InjectedValues</code> is a singletion that for <code>KeyPath</code></p>
+<p>Here is how <code>InjectedValues</code> is defined. </p>
 <pre><code class="language-swift">struct InjectedValues {
     private static var current = InjectedValues()
     private init() {}
@@ -166,6 +175,7 @@ In order to make the app more testable we will use the protocol defined below ac
     }
 }
 </code></pre>
+<p>and there is definition of the property wrapper</p>
 <pre><code class="language-swift">@propertyWrapper
 struct Injected&lt;T&gt; {
     private let keyPath: WritableKeyPath&lt;InjectedValues, T&gt;
@@ -186,8 +196,10 @@ struct Injected&lt;T&gt; {
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../../design-patterns/creational-patterns/singleton/" class="btn btn-neutral float-right" title="Singleton">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-        <a href="../../threading/" class="btn btn-neutral" title="Threading"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+        <a href="../.." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -213,8 +225,10 @@ struct Injected&lt;T&gt; {
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../../threading/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../.." style="color: #fcfcfc">&laquo; Previous</a></span>
     
+    
+      <span><a href="../../design-patterns/creational-patterns/singleton/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
