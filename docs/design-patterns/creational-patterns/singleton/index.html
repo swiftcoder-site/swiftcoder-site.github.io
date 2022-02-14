@@ -413,26 +413,27 @@
 <li>Create static varible</li>
 </ul>
 <p>Let's look at the example:</p>
-<pre><code class="language-swift">class ApiClient {
-    static let shared = ApiClient()
-    private init() {
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">ApiClient</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="kd">let</span> <span class="nv">shared</span> <span class="p">=</span> <span class="n">ApiClient</span><span class="p">()</span>
+    <span class="kd">private</span> <span class="kd">init</span><span class="p">()</span> <span class="p">{</span>
 
-    }
-}
-</code></pre>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
 <p>Now, we can access the instance of <code>ApiClient</code> by <code>ApiClient.shared</code>.</p>
 <p>Here is version with lazy initialisation.</p>
-<pre><code class="language-swift">class ApiClient {
-    // NOTE: Static veribles do not need lazy keywoard
-    static var shared: ApiClient = {
-        ApiClient()
-    }()
+<div class="codehilite"><pre><span></span><code><span class="kd">class</span> <span class="nc">ApiClient</span> <span class="p">{</span>
+    <span class="c1">// NOTE: Static veribles do not need lazy keywoard</span>
+    <span class="kd">static</span> <span class="kd">var</span> <span class="nv">shared</span><span class="p">:</span> <span class="n">ApiClient</span> <span class="p">=</span> <span class="p">{</span>
+        <span class="n">ApiClient</span><span class="p">()</span>
+    <span class="p">}()</span>
 
-    private init() {
+    <span class="kd">private</span> <span class="kd">init</span><span class="p">()</span> <span class="p">{</span>
 
-    }
-}
-</code></pre>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 
               
             </article>

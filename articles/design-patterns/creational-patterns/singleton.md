@@ -9,7 +9,7 @@ Steps to achieve this behaviour:
 
 Let's look at the example:
 
-```swift
+``` swift
 class ApiClient {
     static let shared = ApiClient()
     private init() {

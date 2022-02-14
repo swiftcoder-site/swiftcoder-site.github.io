@@ -27,6 +27,7 @@ theme:
 
 # https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
 # pip3 install pygments
+# pip3 install pymdown-extensions --force
 
 # markdown_extensions:
 #   - pymdownx.highlight:
@@ -34,3 +35,12 @@ theme:
 #   - pymdownx.inlinehilite
 #   - pymdownx.snippets
 #   - pymdownx.superfences
+
+markdown_extensions:
+    - pymdownx.highlight:
+        use_pygments: true
+        anchor_linenums: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - codehilite
