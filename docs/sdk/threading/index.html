@@ -1,114 +1,91 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   
-  <link rel="canonical" href="https://swiftcoder.site/sdk/threading/">
-  <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Threading - Swift Coder - Artur Gurgul</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://swiftcoder.site/sdk/threading/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Threading - Swift Coder - Artur Gurgul</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
 
-  <link rel="stylesheet" href="../../css/theme.css" />
-  <link rel="stylesheet" href="../../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Threading";
-    var mkdocs_page_input_path = "sdk/threading.md";
-    var mkdocs_page_url = "/sdk/threading/";
-  </script>
-  
-  <script src="../../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Kind of jobs might be perform in the separate threads", url: "#_top", children: [
+          ]},
+          {title: "Mutex and the data consistency", url: "#mutex-and-the-data-consistency", children: [
+          ]},
+          {title: "NSObject", url: "#nsobject", children: [
+          ]},
+          {title: "GCD (Grand Central Dispatch)", url: "#gcd-grand-central-dispatch", children: [
+          ]},
+          {title: "NSThread", url: "#nsthread", children: [
+          ]},
+          {title: "NSOperationQueue", url: "#nsoperationqueue", children: [
+              {title: "Blueprint of NSOperation", url: "#blueprint-of-nsoperation" },
+              {title: "Blueprint of NSOperationQueue", url: "#blueprint-of-nsoperationqueue" },
+          ]},
+          {title: "pthread (advanced/JFYI)", url: "#pthread-advancedjfyi", children: [
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script>
+      <script src="../../search/main.js"></script> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
 
-  <div class="wy-grid-for-nav">
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
 
     
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-    <div class="wy-side-scroll">
-      <div class="wy-side-nav-search">
-        <a href="../.." class="icon icon-home"> Swift Coder - Artur Gurgul</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
-      </div>
+    
+      
+    
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">Testing</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../testing/dependency-injection/">Dependency injection</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">Design patterns</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="#">Creational patterns</a>
-    <ul>
-                <li class="toctree-l2"><a class="reference internal" href="../../design-patterns/creational-patterns/singleton/">Singleton</a>
-                </li>
-    </ul>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">SDK</span></p>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Threading</a>
-    <ul class="current">
-    </ul>
-                    </li>
-                </ul>
-      </div>
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav">
+      <a href="../../design-patterns/creational-patterns/singleton/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../../design-patterns/creational-patterns/singleton/" class="btn btn-xs btn-link">
+        Singleton
+      </a>
     </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../..">Swift Coder - Artur Gurgul</a>
-      </nav>
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="../..">Docs</a> &raquo;</li>
     
-      
-        
-          <li>SDK &raquo;</li>
-        
-      
-    
-    <li>Threading</li>
-    <li class="wy-breadcrumbs-aside">
-      
-    </li>
-  </ul>
-  
-  <hr/>
-</div>
+  </div>
 
-          <div role="main">
-            <div class="section">
-              
-                <h4 id="kind-of-jobs-might-be-perform-in-the-separate-threads">Kind of jobs might be perform in the separate threads</h4>
+    
+
+    <h4 id="kind-of-jobs-might-be-perform-in-the-separate-threads">Kind of jobs might be perform in the separate threads</h4>
 <ul>
 <li>Computation intensive jobs: When the thread uses entire processing capability of CPU. The reasonable maximum number of the threads is the number of CPU cores. By crating more threads we cause unnecessary switching of the context by the CPU, which takes some unit of time therefore it makes the calculation slower.</li>
 <li>I/O intensive jobs: In that case we can trigger more threads than we have CPU cores and there is a formula how we can calculate how many thread is an optimal <code>Threads</code> = <code>Cores</code> / (1-<code>Blocking Factor</code>). Here the switch of CPU context itself does not impact much into performance, because the  thread probably is waiting for a signal anyway.</li>
@@ -224,54 +201,33 @@ return_value = pthread_create(&amp;user_interactive_thread, &amp;user_interactiv
     return nil
 }, nil)
 </code></pre>
-              
-            </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+
+  <br>
+    
+
+    
+    
       
-      
-        <a href="../../design-patterns/creational-patterns/singleton/" class="btn btn-neutral" title="Singleton"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav">
+      <a href="../../design-patterns/creational-patterns/singleton/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../../design-patterns/creational-patterns/singleton/" class="btn btn-xs btn-link">
+        Singleton
+      </a>
     </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <!-- Copyright etc -->
     
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-</footer>
-      
-        </div>
-      </div>
-
-    </section>
-
-  </div>
-
-  <div class="rst-versions" role="note" aria-label="versions">
-  <span class="rst-current-version" data-toggle="rst-current-version">
-    
-    
-      <span><a href="../../design-patterns/creational-patterns/singleton/" style="color: #fcfcfc">&laquo; Previous</a></span>
-    
-    
-  </span>
+    <br>
 </div>
-    <script>var base_url = '../..';</script>
-    <script src="../../js/theme_extra.js" defer></script>
-    <script src="../../js/theme.js" defer></script>
-      <script src="../../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
-            SphinxRtdTheme.Navigation.enable(true);
-        };
-    </script>
+
+<footer class="container-fluid wm-page-content">
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
 
 </body>
 </html>

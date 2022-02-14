@@ -19,4 +19,4 @@ nav:
 
 theme:
   name: null
-  custom_dir: 'cinder'
+  custom_dir: 'windmill'
