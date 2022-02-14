@@ -1,6 +1,6 @@
 # Singleton
 
-Singleton is a design pattern that gives a way to get the global access to an instance of a class, and make sure there is only one of the instace of it.
+Singleton is a design pattern that gives a way to get the global access to an instance of a class and make sure there is only one instace of it.
 
 Steps to achieve this behaviour:
 

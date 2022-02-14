@@ -17,6 +17,20 @@ nav:
 # theme:
 #     name: readthedocs
 
+
 theme:
   name: null
-  custom_dir: 'windmill'
+  language: en
+  font: null
+  icon: null
+  custom_dir: 'material'
+
+# https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
+# pip3 install pygments
+
+# markdown_extensions:
+#   - pymdownx.highlight:
+#       anchor_linenums: true
+#   - pymdownx.inlinehilite
+#   - pymdownx.snippets
+#   - pymdownx.superfences
