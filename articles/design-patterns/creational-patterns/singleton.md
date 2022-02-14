@@ -11,7 +11,7 @@ Let's look at the example:
 
 ```swift
 class ApiClient {
-    static let shared = Self()
+    static let shared = ApiClient()
     private init() {
 
     }
