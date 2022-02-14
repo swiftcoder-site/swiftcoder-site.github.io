@@ -2,6 +2,7 @@ site_name: Swift Coder - Artur Gurgul
 docs_dir: articles
 site_dir: docs
 site_url: https://swiftcoder.site/
+repo_url: https://github.com/swiftcoder-site/swiftcoder-site.github.io
 
 nav:
     - Home: index.md
@@ -19,6 +20,9 @@ nav:
 
 
 theme:
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
   name: null
   language: en
   font: null
