@@ -23,10 +23,14 @@ nav:
     - SDK: 
       - Threading: sdk/threading.md
       - Theming with View Modifiers: sdk/view-modifiers.md
+      - Copy-on-Write: sdk/copy-on-write.md
 
 # theme:
 #     name: readthedocs
 
+plugins:
+  - search:
+      prebuild_index: true
 
 theme:
   features:
@@ -40,6 +44,10 @@ theme:
 
   include_search_page: false
   search_index_only: true
+  
+  # palette:
+  #   primary: indigo
+  #   accent: orange
 
 # https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
 # pip3 install pygments
